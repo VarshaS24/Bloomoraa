@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bare Anotomy</title>
+     <link rel="icon" type="image/png" href="img.webp">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+   <style>
+     
+  .custom-card {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+   width:100%;
+   max-width: 300px;
+   display:flex;
+   flex-direction: column;
+   justify-content: space-between;
+   
+}
+
+.custom-img {
+  height: 200px;
+  padding: 10px;
+}
+
+.custom-badge {
+  top: 10px;
+  left: 10px;
+  background-color: yellow !important;
+  color: black !important;
+}
+
+.custom-price {
+  font-weight: bold;
+  color: green;
+  text-align: center;
+}
+
+.btn-outline-light{
+  border-style: none;
+}
+
+.m-0{
+  font-size:20px;
+}
+.col-12{
+  row-gap:30px;
+}
+.text-danger{
+  font-size:30px;
+  font-weight: bold;
+  display:none;
+}
+
+
+#search {
+  border-radius: 10px;
+  position:relative;
+}
+
+#suggestions {
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: white;
+  max-height: 200px;
+ border-radius: 10px;
+}
+
+.nav-link:hover{
+  background-color:green;
+}
+
+
+
+
+</style>
+</head>
+
+<body onload="checkProduct()">
+
+<!-- Top Bar -->
+<div class="bg-warning text-center py-2">
+    <h5 class="m-0">Unlock upto 35% OFF on orders above ₹849. Shop Now! 🛒</h5>
+</div>
+
+<!-- Header -->
+<div class="d-flex align-items-center justify-content-between p-3 bg-black">
+    <a href="Bare anotomy.html">
+        <img src="2.png" style="width:100px; height:70px; margin-left:70px;" alt="Logo">
+    </a>
+
+    <div class="input-group" style="width:400px;">
+       
+        <input type="text" id="search" placeholder="Search products..." autocomplete="off" class="form-control">
+         <ul id="suggestions" class="list-group position-absolute w-100" style="z-index: 999;"></ul>
+
+    </div>
+
+    <div class="d-flex align-items-center">
+        <div class="position-relative me-3" onclick="toggleWishlist()">
+            <img src="black-shopping-cart-icon-22.png" width="50" height="50">
+            <span id="wishlistCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+        </div>
+        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#authModal">
+         <img src="1.webp"class="profile" style="width:40px; height:30px; ">
+</button>
+</div>
+    </div>
+
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black">
+  <div class="container-fluid">
+    <!-- Toggler button for small screens -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHair" aria-controls="navbarHair" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible navbar items, centered -->
+    <div class="collapse navbar-collapse justify-content-center margin-left:20px;" id="navbarHair">
+      <ul class="navbar-nav" style="margin-left: 30px;">
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('shampoo')">Shampoo</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('conditioner')">Conditioner</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('hairmask')">Hair Mask</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('hairserum')">Hair Serum</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('hairspray')">Hair Spray</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('combo')">Combo</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!--  Popup Modal -->
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="authModalLabel">Authentication</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Login Box -->
+        <div id="login-box">
+          <h4 class="text-center mb-3">Login</h4>
+          <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email" required>
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" required>
+          </div>
+          <p class="text-end"><a href="#" class="text-primary">Forgot Password?</a></p>
+          <div class="d-grid mb-3">
+            <button class="btn btn-primary">Log In</button>
+          </div>
+          <p class="text-center">Or else</p>
+          <p class="text-center">
+            <a href="#" class="text-primary" onclick="showSignup()">Signup</a>
+          </p>
+        </div>
+
+        <!-- Signup Box  -->
+        <div id="signup-box" style="display: none;">
+          <h4 class="text-center mb-3">Signup</h4>
+          <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email" required>
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" required>
+          </div>
+          <div class="d-grid mb-3">
+            <button class="btn btn-success">Sign Up</button>
+          </div>
+          <p class="text-center">Already have an account? <a href="#" class="text-primary" onclick="showLogin()">Login</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="my-0">
+  <a href="Bare anotomy.html?data-badge=New Launch">
+    <img src="21.png" class="img-fluid w-100" style="max-height:400px;">
+  </a>
+</div>
+    
+<div class="container mt-4 ">
+  <h2 class="text-center mb-4">Bare anatomy Bestsellers</h2>
+  <div class="row g-4">
+
+<div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="shampoo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Shampoo_1.jpg?v=1733297902&width=720" class="card-img-top" alt="Anti Dandruff Shampoo">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Anti Dandruff Shampoo with Salicylic Acid  250ml</h5>
+          <p class="card-text custom-desc">Reduces Dandruff Up To 100% | Treats Itchy Scalp | Reduces Itching | Oil Control</p>
+          <p class="custom-price fw-bold">₹381.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="shampoo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Shampoo_3.png?v=1721117646&width=720" class="card-img-top" alt="Volumizing Shampoo">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Volumizing Shampoo for Thin & Flat Hair - 250ml</h5>
+          <p class="card-text custom-desc">24HR Voluminous Hair | Rice Milk Protein | Strengthens Hair | Prevents Breakage</p>
+          <p class="custom-price fw-bold">₹595.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="shampoo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Shampoo_2.png?v=1742279600&width=720" class="card-img-top" alt="Hair Fall Control Shampoo">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Hair Fall Control Shampoo with Peptides - 250ml</h5>
+          <p class="card-text custom-desc">5X Hairfall Control | Reduces Breakage | Strengthens Hair | Reduces Hair Thinning</p>
+          <p class="custom-price fw-bold">₹545.00</p>
+       <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+     <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="shampoo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/01_bf6c5111-7748-4d6d-9d44-6586bf021e49.png?v=1723095000&width=720" class="card-img-top" alt="Ultra Smoothing Shampoo">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Ultra Smoothing Shampoo for Smooth & Shiny - 250ml</h5>
+          <p class="card-text custom-desc">Restores Smoothness & Texture By 37% | Smooth Hair | Shinier Hair</p>
+          <p class="custom-price fw-bold">₹595.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="shampoo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Artboard1_5be9e563-9e4a-4947-ba04-aafe4433f66f.png?v=1723094882&width=720" class="card-img-top" alt="Damage Repair Shampoo">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Damage Repair Shampoo for Dry & Brittle Hair - 250ml</h5>
+          <p class="card-text custom-desc">Repair Dry & Damaged Hair | 10X Hair Strengthening | Stronger Hair | Nourishes the Scalp</p>
+          <p class="custom-price fw-bold">₹595.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+     <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="conditioner">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/leave_in_ea3c8f6e-87dd-4090-896e-e796602d9078.png?v=1721203814&width=1080" class="card-img-top" alt="Anti-Frizz Leave-In Conditioner">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Anti-Frizz Leave-In Conditioner - 150ml</h5>
+          <p class="card-text custom-desc">Controls Frizz Up To 24 Hours | Smoother Hair | Glossy Hair | Nourishes the Hair</p>
+          <p class="custom-price fw-bold">₹599.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="conditioner">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/leave_in_67c332c7-e5e6-4246-aeff-2d6cc19e2e92.png?v=1721202321&width=1080" class="card-img-top" alt="Curl Intensifying Leave-In Conditioner">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Curl Intensifying Leave-In Conditioner - 140ml</h5>
+          <p class="card-text custom-desc">73% More Shine | Deep Curl Conditioning</p>
+          <p class="custom-price fw-bold">₹449.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+      </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="conditioner">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/gel.png?v=1721204405&width=1080" class="card-img-top" alt="Curl Defining Gel">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Curl Defining Gel - 140ml</h5>
+          <p class="card-text custom-desc">73% More Shine | 62% Smoothness In 1st Wash | Curl Definition & Styling</p>
+          <p class="custom-price fw-bold">₹449.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+     <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairmask">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/mask_1.png?v=1721115271&width=720" class="card-img-top" alt="Hair Mask for Hair Fall Control">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Hair Mask for Hair Fall Control - 250gm</h5>
+          <p class="card-text custom-desc">5X Hairfall Control | Promotes Hair Growth | Stronger Hair | Reduces Hair Thinning</p>
+          <p class="custom-price fw-bold">₹399</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairmask">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Mask_b224c1e8-9183-42d3-94f6-2afd3aedcdf3.png?v=1721112453&width=720" class="card-img-top" alt="Ultra Smoothing Hair Mask">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Ultra Smoothing Hair Mask - 250gm</h5>
+          <p class="card-text custom-desc">Restores Smoothness & Texture by 27% | Deeply Nourishes Frizzy Hair | Smooth Hair | Silky Hair</p>
+          <p class="custom-price fw-bold">₹745.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairmask">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Mask_57c73d65-10d3-450b-bb67-f5146a19dd73.jpg?v=1733298126&width=720" class="card-img-top" alt="Anti Dandruff Mask">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Anti Dandruff Mask - 250gm</h5>
+          <p class="card-text custom-desc">Visible Dandruff Reduction up to 100% | Moisturising Dry & Frizzy Hair | Hair Smoothing & Conditioning</p>
+          <p class="custom-price fw-bold">₹595.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+     <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairserum">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Hair_Growth_Serum_ad093139-e301-4832-8199-7c3d84dd0e11.png?v=1740719787&width=720" class="card-img-top" alt="Advanced Hair Growth Serum">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Advanced Hair Growth Serum - 30ml</h5>
+          <p class="card-text custom-desc">Reduces Hair Thinning | 89% Hair Loss Reduction</p>
+          <p class="custom-price fw-bold">₹849.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairserum">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/First-Image.png?v=1729755652&width=720" class="card-img-top" alt="Rosemary Hair Oil">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Rosemary & Hibiscus Hair Growth Oil - 100ml</h5>
+          <p class="card-text custom-desc">Promotes Hair Growth | Hair Fall Control | Strengthening | Smoothening</p>
+          <p class="custom-price fw-bold">₹299.00</p>
+    <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairserum">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Serum_b4a8c144-31f2-42e2-8aef-365edfe8c5cb.png?v=1721119538&width=720" class="card-img-top" alt="Damage Repair Serum">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Damage Repair Hair Serum - 50ml</h5>
+          <p class="card-text custom-desc">Restores Hair Strength by 3X | Hair Fall Control | Strengthening | Smoothening</p>
+          <p class="custom-price fw-bold">₹475.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairspray">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/Heat_protect_Spray.png?v=1741675524&width=720" class="card-img-top" alt="Heat Protection Spray">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">24-Hours Frizz Control Heat Protection Spray - 150ml</h5>
+          <p class="card-text custom-desc">450°F Thermal Protection | 24H Frizz Control | Non-Greasy & Shiny Hair</p>
+          <p class="custom-price fw-bold">₹549.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="hairspray">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/RosemerryRiceWatter_5copy.jpg?v=1736751026&width=720" class="card-img-top" alt="Hair Growth Spray">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Rosemary & Rice Water Hair Growth Spray - 200ml</h5>
+          <p class="card-text custom-desc">Promotes Hair Growth | Fall Control | Thickness | Smooth Hair</p>
+          <p class="custom-price fw-bold">₹399.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="combo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://innovist.com/cdn/shop/files/US_S_M_First_Image.png?v=1721639956&width=720" class="card-img-top" alt="Ultra Smoothing Kit">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Ultra Smoothing Kit - (Mask | Shampoo)</h5>
+          <p class="card-text custom-desc">Restores Smoothness & Texture by 27%* | Retains Moisture | Deep Conditioning</p>
+          <p class="custom-price fw-bold">₹1340.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="combo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge position-absolute top-0 start-0 m-2" style="background-color: darkmagenta; color: yellow;" data-badge="New Launch">New Launch</span>
+        <img src="https://innovist.com/cdn/shop/files/Shampoo_Mask_Serum.png?v=1749278817&width=720" class="card-img-top" alt="Ultra Smoothing Kit Full">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Ultra Smoothing Kit - (Mask | Shampoo | Serum)</h5>
+          <p class="card-text custom-desc">Restores texture | Locks in moisture | Improves texture & health</p>
+          <p class="custom-price fw-bold">₹1815.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 d-flex product-section d-flex" data="combo">
+      <div class="card custom-card position-relative h-100 w-100">
+        <span class="badge  position-absolute top-0 start-0 m-2" style="background-color: darkmagenta; color: yellow;" data-badge="New Launch">New Launch</span>
+        <img src="https://innovist.com/cdn/shop/files/1_1_9ea43858-4ee5-44b6-93c0-605bfcdaab7d.png?v=1743583424&width=720" class="card-img-top" alt="Hydrating Shampoo & Conditioner">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Rosemary & Coconut Milk Hydrating Combo</h5>
+          <p class="card-text custom-desc">Deeply Hydrates | Frizz Control | Silky Hair | Strengthens Dry Hair</p>
+          <p class="custom-price fw-bold">₹598.00</p>
+      <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    
+</div>
+<p id="noResults" class="text-danger">No products found 😔 </p>
+</div>
+
+
+<aside id="wishlist" class="d-none bg-dark p-3 rounded position-fixed top-0 end-0" style="width: 300px; height: 100%; overflow-y: auto;">
+    <button class="btn btn-danger mb-2" style="margin-left:250px; font-size: 10px; padding:5px 10px;" onclick="toggleWishlist()">X</button>
+    <h5 class="text-white" style="text-align:center">Your Wishlist</h5>
+    <div id="wishlistItems"></div>
+    <div id="grandTotal" class="text-warning mt-3"style="text-align:center">Grand Total: ₹0.00</div>
+</aside>
+
+
+    <footer class="bg-dark text-white mt-5 pt-4 pb-2">
+  <div class="container">
+    <div class="row">
+
+ 
+      <div class="col-md-3 mb-4">
+        <h5>BLOOMORA</h5>
+        <p>Clean | Transparent | Science</p>
+        <div class="d-flex">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Facebook_Logo_2023.png" class="me-2" width="30" alt="Facebook">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="30" alt="Instagram">
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-4">
+        <h5>Shop</h5>
+        <ul class="list-unstyled">
+          <li>Brands</li>
+          <li>Best Seller</li>
+          <li>New Launches</li>
+          <li>Kids Care</li>
+          <li>Sun Care</li>
+          <li>Skin Care</li>
+          <li>Hair Care</li>
+        </ul>
+      </div>
+
+      <div class="col-md-3 mb-4">
+        <h5>Explore</h5>
+        <ul class="list-unstyled">
+          <li>Bare Anatomy</li>
+          <li>Aqualogical</li>
+          <li>Plum</li>
+          <li>Mommy Pure</li>
+        </ul>
+        <div class="d-flex gap-3 mt-3">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Facebook_Logo_2023.png" alt="Facebook" width="30">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" width="30">
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-4">
+        <h5>🔒 Secure Payment</h5>
+        <p>Your payment information is processed securely</p>
+        <div class="d-flex flex-wrap align-items-center">
+          <img src="https://crosschecknews.com/wp-content/uploads/2024/01/UPI-Lpgo-UPI-Icon-PNG.png" alt="UPI" class="me-2 mb-2" width="50">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/RuPay.svg/2560px-RuPay.svg.png" alt="RuPay" class="me-2 mb-2" width="50">
+          <img src="https://cdn-icons-png.flaticon.com/512/1040/1040247.png" alt="Wallet" class="me-2 mb-2" width="40">
+          <img src="https://cdn-icons-png.flaticon.com/512/891/891419.png" alt="Net Banking" class="me-2 mb-2" width="40">
+          <img src="https://cdn-icons-png.flaticon.com/512/639/639365.png" alt="COD" class="me-2 mb-2" width="40">
+        </div>
+      </div>
+       </div>
+
+    <div class="row">
+      <div class="col-12 text-center mt-3">
+        <p class="mb-0">&copy; 2025 Onesto Labs Private Limited. All Rights Reserved</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+ 
+let wishList = [];
+
+function updateWishlistCount() {
+    document.getElementById("wishlistCount").innerText = wishList.length;
+}
+
+function showOnly(data) {
+  const products = document.querySelectorAll('.product-section');
+
+  products.forEach(product => {
+    if (product.getAttribute('data') === data) {
+      product.classList.remove('d-none'); 
+      product.classList.add('d-flex');    
+    } else {
+      product.classList.add('d-none');    
+      product.classList.remove('d-flex');
+    }
+  });
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const dataParam = urlParams.get('data');  
+  const badgeParam = urlParams.get('data-badge');  
+
+  document.querySelectorAll('.product-section').forEach(product => {
+    let show = true; 
+
+    if (dataParam) {
+      const category = product.getAttribute('data')?.toLowerCase().trim();
+      if (category !== dataParam.toLowerCase().trim()) {
+        show = false;
+      }
+    }
+
+    if (badgeParam) {
+      const badgeEl = product.querySelector('[data-badge]');
+      const badgeText = badgeEl?.getAttribute('data-badge')?.toLowerCase().trim();
+      if (badgeText !== badgeParam.toLowerCase().trim()) {
+        show = false;
+      }
+    }
+
+    if (show) {
+      product.classList.remove('d-none');
+      product.classList.add('d-flex');
+    } else {
+      product.classList.add('d-none');
+      product.classList.remove('d-flex');
+    }
+  });
+});
+
+
+
+function setup() {
+    let products = document.querySelectorAll(".custom-btn");
+    products.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const card = e.target.closest(".card");
+            const productTitle = card.querySelector(".custom-title").innerText;
+            const priceText = card.querySelector(".custom-price").innerText;
+            const imgSrc = card.querySelector(".card-img-top").src;
+            addItem(productTitle, priceText, imgSrc);
+        });
+    });
+}
+
+function addItem(title, price, imgSrc) {
+    if (wishList.find(item => item.title === title)) return; 
+
+    const priceValue = parseFloat(price.replace(/[^\d.]/g, ""));
+    const item = { title, priceValue, qty: 1, imgSrc };
+    wishList.push(item);
+    renderWishlist();
+    updateWishlistCount();
+    calculateGrandTotal();
+}
+
+function renderWishlist() {
+    const wishlistContainer = document.getElementById("wishlistItems");
+    wishlistContainer.innerHTML = "";
+    wishList.forEach((item, index) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "d-flex align-items-center mb-2 bg-dark text-white p-2 rounded";
+        itemDiv.innerHTML = `
+            <img src="${item.imgSrc}" style="width:80px; height:100px;" class="me-2 rounded">
+            <div class="flex-grow-1">
+                <p class="mb-0 wishlist-title" style="font-size: 15px; margin: 5px 0;">${item.title}</p>
+                <div class="d-flex align-items-center mt-2">
+                    <p class="mb-0 fw-bold me-3">₹${item.priceValue}</p>
+                    <input type="number" min="1" value="${item.qty}" class="form-control qty-input me-3" data-index="${index}" style="width: 50px; height: 25px; padding: 2px; margin-left:70px;">
+                </div>
+                <button class="btn btn-sm btn-danger remove-btn" data-index="${index}" style="width: 70px; margin-left:60px; margin-top:10px;">Remove</button>
+            </div>
+        `;
+        wishlistContainer.appendChild(itemDiv);
+    });
+    setQtyListeners();
+    setRemoveListeners();
+}
+
+function setQtyListeners() {
+    document.querySelectorAll(".qty-input").forEach(input => {
+        input.addEventListener("input", (e) => {
+            const index = e.target.getAttribute("data-index");
+            const qty = parseInt(e.target.value);
+            wishList[index].qty = qty > 0 ? qty : 1;
+            calculateGrandTotal();
+        });
+    });
+}
+
+function setRemoveListeners() {
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const index = e.target.getAttribute("data-index");
+            wishList.splice(index, 1);
+            renderWishlist();
+            updateWishlistCount();
+            calculateGrandTotal();
+        });
+    });
+}
+
+function calculateGrandTotal() {
+    let total = 0;
+    wishList.forEach(item => {
+        total += item.priceValue * item.qty;
+    });
+    document.getElementById("grandTotal").innerText = `Grand Total: ₹${total.toFixed(2)}`;
+}
+
+function toggleWishlist() {
+    const wishlist = document.getElementById("wishlist");
+    wishlist.classList.toggle("d-none");
+}
+
+window.onload = setup;
+
+
+
+
+
+const searchBox = document.getElementById('search');
+const placeholders = [
+    "🔍 Search for Shampoo",
+    "🔍 Search for Conditioner",
+    "🔍 Search for Hair Mask",
+    "🔍 Search for Hair Spray",
+    "🔍 Search for Hair Serum",
+     "🔍 Search for Combo"
+];
+
+let wordIndex = 0;
+let charIndex = 0;
+
+function typePlaceholder() {
+    if (charIndex <= placeholders[wordIndex].length) {
+        searchBox.placeholder = placeholders[wordIndex].substring(0, charIndex);
+        charIndex++;
+        setTimeout(typePlaceholder, 100);
+    } else {
+        setTimeout(erasePlaceholder, 2000);
+    }
+}
+
+function erasePlaceholder() {
+    if (charIndex >= 0) {
+        searchBox.placeholder = placeholders[wordIndex].substring(0, charIndex);
+        charIndex--;
+        setTimeout(erasePlaceholder, 50);
+    } else {
+        wordIndex = (wordIndex + 1) % placeholders.length;
+        setTimeout(typePlaceholder, 500);
+    }
+}
+
+typePlaceholder();
+
+
+searchBox.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    searchProduct();
+    searchBox.value = ''; 
+    suggestionsBox.innerHTML = '';
+    suggestionsBox.style.display = 'none';
+  }
+});
+
+function normalize(str) {
+  return str.toLowerCase().replace(/\s+/g, '').trim();
+}
+
+const suggestionsBox = document.getElementById("suggestions");
+
+searchBox.addEventListener("input", function () {
+  const input = this.value;
+  const search = normalize(input);
+  suggestionsBox.innerHTML = "";
+
+  if (!input.trim()) {
+    suggestionsBox.style.display = "none";
+    showAllProducts();
+    return;
+  }
+
+  const products = document.querySelectorAll('.product-section');
+  const shownKeywords = new Set();
+  let matchCount = 0;
+
+  products.forEach(product => {
+    const keyword = product.getAttribute('data') || '';
+    const keywordLower = keyword.toLowerCase();
+    const keywordNormalized = normalize(keywordLower);
+
+    if (
+      keywordLower.includes(input.toLowerCase()) ||
+      keywordNormalized.includes(search)
+    ) {
+      if (!shownKeywords.has(keywordLower) && matchCount < 5) {
+        const li = document.createElement("li");
+        li.className = "list-group-item list-group-item-action";
+        li.textContent = keyword;
+        li.addEventListener("click", () => {
+          searchBox.value = keyword;
+          suggestionsBox.innerHTML = "";
+          suggestionsBox.style.display = "none";
+          searchProduct();
+          searchBox.value = '';
+        });
+        suggestionsBox.appendChild(li);
+
+        shownKeywords.add(keywordLower);
+        matchCount++;
+      }
+    }
+  });
+
+  suggestionsBox.style.display = matchCount > 0 ? "block" : "none";
+});
+
+document.addEventListener("click", function (e) {
+  if (!suggestionsBox.contains(e.target) && e.target !== searchBox) {
+    suggestionsBox.style.display = "none";
+  }
+});
+
+function showAllProducts() {
+  document.querySelectorAll(".product-section").forEach(product => {
+    product.classList.remove("d-none");
+    product.classList.add("d-block");
+  });
+}
+
+function searchProduct() {
+  const input = searchBox.value.toLowerCase().trim();
+  const search = normalize(input);
+
+  const products = document.querySelectorAll('.product-section');
+  let found = false;
+
+  products.forEach(product => {
+    const keyword = product.getAttribute('data') || '';
+    const keywordLower = keyword.toLowerCase();
+    const keywordNormalized = normalize(keywordLower);
+
+    if (
+      keywordLower.includes(input) ||
+      keywordNormalized.includes(search)
+    ) {
+      product.classList.remove('d-none');
+      product.classList.add('d-block');
+      found = true;
+    } else {
+      product.classList.add('d-none');
+      product.classList.remove('d-block');
+    }
+  });
+
+  const noResults = document.getElementById("noResults");
+  if (noResults) {
+    noResults.style.display = found ? 'none' : 'block';
+  }
+   searchBox.value = '';
+}
+
+
+
+
+function openPopup() {
+    document.getElementById('popup').classList.remove('d-none');
+}
+
+function closePopup() {
+    document.getElementById('popup').classList.add('d-none');
+}
+
+function showSignup() {
+  document.getElementById('login-box').style.display = 'none';
+  document.getElementById('signup-box').style.display = 'block';
+}
+
+function showLogin() {
+  document.getElementById('signup-box').style.display = 'none';
+  document.getElementById('login-box').style.display = 'block';
+}
+
+
+
+    </script>
+
+
+

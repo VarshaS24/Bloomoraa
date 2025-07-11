@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Aqualogica</title>
+   <link rel="icon" type="image/png "  href="aqua.jpg">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+   <style>
+     
+  .custom-card {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+   width:100%;
+   max-width: 300px;
+   display:flex;
+   flex-direction: column;
+   justify-content: space-between;
+   
+}
+
+.custom-img {
+  height: 200px;
+  padding: 10px;
+}
+
+.custom-badge {
+  top: 10px;
+  left: 10px;
+  background-color: yellow !important;
+  color: black !important;
+}
+
+.custom-price {
+  font-weight: bold;
+  color: green;
+  text-align: center;
+}
+
+.btn-outline-light{
+  border-style: none;
+}
+
+.m-0{
+  font-size:20px;
+}
+.col-12{
+  row-gap:30px;
+}
+
+.text-danger{
+  font-size:30px;
+  font-weight: bold;
+  display:none;
+}
+
+#search {
+  border-radius: 10px;
+  position:relative;
+}
+
+#suggestions {
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: white;
+  max-height: 200px;
+ border-radius: 10px;
+}
+.nav-link:hover{
+  background-color:chocolate;
+}
+
+
+
+</style>
+</head>
+
+<body onload="checkProduct()">
+
+<!-- Top Bar -->
+<div class="bg-warning text-center py-2">
+    <h5 class="m-0">Unlock upto 35% OFF on orders above ₹849. Shop Now! 🛒</h5>
+</div>
+
+<!-- Header -->
+<div class="d-flex align-items-center justify-content-between p-3 bg-black">
+    <a href="aqua.html">
+        <img src="3.png" style="width:100px; height:70px; margin-left:70px;" alt="Logo">
+    </a>
+
+    <div class="input-group" style="width:400px;">
+        <input type="text" id="search" placeholder="Search products..." autocomplete="off" class="form-control">
+         <ul id="suggestions" class="list-group position-absolute w-100" style="z-index: 999;"></ul>
+    </div>
+
+    <div class="d-flex align-items-center">
+        <div class="position-relative me-3" onclick="toggleWishlist()">
+            <img src="black-shopping-cart-icon-22.png" width="50" height="50">
+            <span id="wishlistCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+        </div>
+        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#authModal">
+         <img src="1.webp"class="profile" style="width:40px; height:30px; ">
+</button>
+</div>
+    </div>
+
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black">
+  <div class="container-fluid">
+    <!-- Toggler button for small screens -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarItems" aria-controls="navbarItems" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <!-- Navbar items inside collapsible div -->
+    <div class="collapse navbar-collapse justify-content-center margin-left:20px;" id="navbarItems">
+      <ul class="navbar-nav" style="margin-left: 30px;">
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('sunscreen')">Sunscreen</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('lipbalm')">Lip Balm</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('eye')">Eye Care</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('lotion')">Body Lotion</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('tube sunscreen')">Tube Type</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('spray sunscreen')">Spray Type</a></li>
+        <li class="nav-item"><a class="nav-link text-white fs-5" href="#" onclick="showOnly('stick')">Stick Type</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!--  Popup Modal -->
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="authModalLabel">Authentication</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Login Box -->
+        <div id="login-box">
+          <h4 class="text-center mb-3">Login</h4>
+          <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email" required>
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" required>
+          </div>
+          <p class="text-end"><a href="#" class="text-primary">Forgot Password?</a></p>
+          <div class="d-grid mb-3">
+            <button class="btn btn-primary">Log In</button>
+          </div>
+          <p class="text-center">Or else</p>
+          <p class="text-center">
+            <a href="#" class="text-primary" onclick="showSignup()">Signup</a>
+          </p>
+        </div>
+
+        <!-- Signup Box (Initially Hidden) -->
+        <div id="signup-box" style="display: none;">
+          <h4 class="text-center mb-3">Signup</h4>
+          <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email" required>
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" required>
+          </div>
+          <div class="d-grid mb-3">
+            <button class="btn btn-success">Sign Up</button>
+          </div>
+          <p class="text-center">Already have an account? <a href="#" class="text-primary" onclick="showLogin()">Login</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Banner -->
+<a href="aqua.html?data=sunscreen">
+  <img src="23.png" class="img-fluid w-100" style="max-height:400px;">
+</a>
+
+    
+<div class="container mt-4 ">
+  <h2 class="text-center mb-4">Aqualogica Bestsellers</h2>
+  <div class="row g-4">
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="spray">
+      <div class="card custom-card position-relative h-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_0bcfa34f-dfe5-4c7f-b42b-43ec95c467a0.jpg?v=1747844714&width=990" class="card-img-top" alt=" Sunscreen">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Glow+ Dewy Spray Sunscreen SPF 50+ PA++++ | Papaya</h5>
+          <p class="card-text custom-desc">Brightens Skin | No White Cast | For Glowing & Sun Protected Skin</p>
+          <p class="custom-price fw-bold">₹449.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+   
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="spray sunscreen">
+      <div class="card custom-card position-relative h-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/Shoot_5c12b806-b924-4936-b5e6-57787d2de5ea.jpg?v=1741081717&width=533" class="card-img-top" alt=" Sunscreen">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Illuminate+ Dewy Spray Sunscreen SPF 50+ PA++++ | Wild Berries</h5>
+          <p class="card-text custom-desc">Evens Skin Tone | Fragrance-Free | For Sun Protected Skin</p>
+          <p class="custom-price fw-bold">₹599.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="spray sunscreen">
+      <div class="card custom-card position-relative h-100">
+        <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/1_efe2a5c5-3705-40cf-8e55-eac290b434bc.jpg?v=1701348747&width=533" class="card-img-top" alt=" Sunscreen">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Hydrate+ Dewy Spray Sunscreen SPF 50 & PA+++ | Coconut</h5>
+          <p class="card-text custom-desc">Blue Light Protection | Fragrance-free | Color-free</p>
+          <p class="custom-price fw-bold">₹449.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+     <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="spray sunscreen">
+  <div class="card custom-card position-relative h-100">
+    <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+    <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_bcdcf165-a878-49e4-b910-bb45bc5f3e7c.jpg?v=1747636581&width=990" class="card-img-top" alt="Sunscreen">
+    <div class="card-body text-center d-flex flex-column">
+      <h5 class="card-title custom-title">Detan+ Dewy Spray Sunscreen SPF 50+ PA++++ | Tomato</h5>
+      <p class="card-text custom-desc">Anti-Pollution Factor | Removes Tanning | Evens Skin Tone</p>
+      <p class="custom-price fw-bold">₹499.00</p>
+      <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="spray sunscreen">
+  <div class="card custom-card position-relative h-100">
+    <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+    <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_9c773e8a-5f97-42cb-aff4-ad49e7076989.jpg?v=1748959100&width=990" class="card-img-top" alt="Sunscreen">
+    <div class="card-body text-center d-flex flex-column">
+      <h5 class="card-title custom-title">Radiance+ Dewy Spray Sunscreen SPF 50 & PA+++ | Watermelon</h5>
+      <p class="card-text custom-desc">Ideal for Oily Skin Type | No White Cast | For Radiant Skin</p>
+      <p class="custom-price fw-bold">₹449.00</p>
+      <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+    
+      <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="tube sunscreen">
+      <div class="card custom-card position-relative h-100">
+        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_ec4b0fe4-6a6b-4aaf-b73d-1ca39a0be2cd.jpg?v=1746683149&width=533" class="card-img-top" alt=" Sunscreen">
+       <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Glow+ Dewy tube Sunscreen SPF 50+ PA++++ | Papaya</h5>
+          <p class="card-text custom-desc">Brightens Skin | No White Cast | For Glowing & Sun Protected Skin</p>
+          <p class="custom-price fw-bold">₹599.00</p>
+           <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button> 
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="tube sunscreen">
+      <div class="card custom-card position-relative h-100">
+        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_89c78852-4ff4-45fa-8654-efc0c97980da.jpg?v=1747637716&width=533" class="card-img-top" alt="Tomato Sunscreen">
+       <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Detan+ Dewy tube Sunscreen SPF 50+ PA++++ | Tomato</h5>
+          <p class="card-text custom-desc">Anti-Pollution Factor | Removes Tanning Evens Skin Tone</p>
+          <p class="custom-price fw-bold">₹599.00</p>
+           <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+ <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="tube sunscreen">
+      <div class="card custom-card position-relative h-100">
+        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_1837537e-dbdc-4615-9be1-eaf4aad31a2a.jpg?v=1748960494&width=533" class="card-img-top" alt="Watermelon Sunscreen">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Radiance+ Dewy tube Sunscreen SPF 50 & PA+++ | Watermelon</h5>
+          <p class="card-text custom-desc">Ideal for Oily Skin Type | No White Cast | For Radiant Skin</p>
+          <p class="custom-price fw-bold">₹599.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="tube sunscreen">
+     <div class="card custom-card position-relative h-100">
+        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_45eb2c2d-42ab-4f87-91dc-fb9c40271056.jpg?v=1743576217&width=533" class="card-img-top" alt="Wild Berries Sunscreen">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Illuminate+ Dewy tube Sunscreen SPF 50+ PA++++ | Wild Berries</h5>
+          <p class="card-text custom-desc">Evens Skin Tone | Fragrance-Free | For Sun Protected Skin</p>
+          <p class="custom-price fw-bold">₹599.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="tube sunscreen">
+      <div class="card custom-card position-relative h-100">
+        <span class="badge  position-absolute top-0 start-0 m-2 " style="background-color: darkmagenta; color:yellow; " data-badge="New Launch">New Launch</span>
+        <img src="https://aqualogica.in/cdn/shop/files/1.3_Photoshoot_ca1caeb9-7c4c-4987-b9bc-4762620a04fb.jpg?v=1744010752&width=990" class="card-img-top" alt="BlueBerries Sunscreen">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Bright+ Tone Up tube Sunscreen SPF 50+ PA++++ | BlueBerries</h5>
+          <p class="card-text custom-desc">Super Light | SPF 50+ PA++++ | No white cast | Instantly Brightens</p>
+          <p class="fw-bold">₹449.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+ <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex"  data="tube sunscreen">
+     <div class="card custom-card position-relative h-100">
+        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+        <img src="https://aqualogica.in/cdn/shop/files/shoot_c210050a-b628-46fd-b9b6-22498cc9bef4.jpg?v=1730719911&width=990" class="card-img-top" alt="Avocado Sunscreen">
+        <div class="card-body text-center d-flex flex-column">
+          <h5 class="card-title custom-title">Barrier+ Repair tube Sunscreen SPF 50+ PA++++ | Avocado</h5>
+          <p class="card-text custom-desc">Strengthens Skin Barrier | SPF 50+ PA++++ Protection | Super Light & Moisturizing</p>
+          <p class="fw-bold">₹449.00</p>
+          <button class="btn btn-primary mt-auto w-100 custom-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="lipbalm">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Crimson_Candy_Plump__-Lip_balm.jpg?v=1722338065&width=990" class="card-img-top" alt="Crimson Candy Lip Balm">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Crimson Candy Plump+ Luscious Tinted SPF 20+ Lip Balm | Watermelon</h5>
+        <p class="card-text custom-desc">Intensely Hydrating | Lightweight | Non-Sticky</p>
+        <p class="custom-price fw-bold">₹299.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="lipbalm">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Coral_slush_Plump__Lip_balm.jpg?v=1722338499&width=990" class="card-img-top" alt="Coral Slush Lip Balm">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Coral Slush Plump+ Luscious Tinted SPF 20+ Lip Balm | Mango</h5>
+        <p class="card-text custom-desc">Intensely Hydrating | Lightweight | Non-Sticky</p>
+        <p class="custom-price fw-bold">₹299.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="lipbalm">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Pink_Sorbet_Plump__Lip_balm.jpg?v=1722338000&width=990" class="card-img-top" alt="Pink Sorbet Lip Balm">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Pink Sorbet Plump+ Luscious Tinted SPF 20+ Lip Balm | Berries</h5>
+        <p class="card-text custom-desc">Intensely Hydrating | Lightweight | Non-Sticky</p>
+        <p class="custom-price fw-bold">₹299.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="eye">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/products/58826f40-752b-43a-93fe-772ce5aa2e28__20_a.jpg?v=1701691844&width=533" 
+           class="card-img-top" alt="Glow+ Under Eye Gel">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Glow+ Luminous Under Eye Gel | Blend of Fruits</h5>
+        <p class="card-text custom-desc">Hydrates Under Eyes | Blend of Fruits & Actives</p>
+        <p class="custom-price fw-bold">₹549.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="eye">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-danger position-absolute top-0 start-0 m-2" badge="New Launch">Trending</span>
+      <img src="https://aqualogica.in/cdn/shop/files/1_0f552c51-fe17-4b69-9982-2e5591436a02.jpg?v=1703058895&width=990" 
+           class="card-img-top" alt="Radiance+ Juicy  Drops">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Radiance+ Juicy eye Drops | Watermelon</h5>
+        <p class="card-text custom-desc">Instant Luminous Radiance | Lightweight & Hydrating</p>
+        <p class="custom-price fw-bold">₹699.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="eye">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/products/glow__juicy_dew_drop_01.jpg?v=1701349377&width=990" 
+           class="card-img-top" alt="Glow+ Juicy Dew Drops">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Glow+ Juicy eye Drops | Papaya</h5>
+        <p class="card-text custom-desc">Instant Glow | Glossy & Dewy Finish | Vitamin C & Papaya</p>
+        <p class="custom-price fw-bold">₹699.00</p>
+       <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="stick">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge  position-absolute top-0 start-0 m-2 " style="background-color: darkmagenta; color:yellow; " data-badge="New Launch" >New Launch</span>
+      <img src="https://aqualogica.in/cdn/shop/files/8_7719d671-b3e8-43d1-bd48-7c8371f6605a.jpg?v=1722337923&width=990" 
+           class="card-img-top" alt="Illuminate+ Milk Fluid Moisturizer | Berries">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Glow+ Dewy Sunstick with SPF 50+ & PA++++  </h5>
+        <p class="card-text custom-desc">Lightweight | Non-Greasy | Hydrates Skin</p>
+        <p class="custom-price fw-bold">₹599.00</p>
+       <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="stick">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge position-absolute top-0 start-0 m-2 " style="background-color: darkmagenta; color:yellow; " data-badge="New Launch">New Launch</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_96428c15-dd6b-4055-b8c3-00f0fa00d36b.jpg?v=1728019497&width=990" 
+           class="card-img-top" alt="Illuminate+ Milk Fluid Moisturizer | Berries">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Illuminate+ Milk Fluid stick Moisturizer | Berries</h5>
+        <p class="card-text custom-desc">Lightweight Milk-Like Texture | Evens Skin Tone | 48Hr Deep Moisturization</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="stick">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge"  data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Photoshoot.jpg?v=1727948221&width=990" 
+           class="card-img-top" alt="Glow+ Milk Fluid Moisturizer | Papaya">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Glow+ Milk Fluid stick Moisturizer | Papaya</h5>
+        <p class="card-text custom-desc">Melt-In-Your-Skin Milk Texture | Brightens & Deeply Hydrates | 48-Hour Moisturization</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="stick">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_1dbf28c5-ba93-4b9f-a4cb-3d6db7037fa7.jpg?v=1728020726&width=990" 
+           class="card-img-top" alt="Barrier+ Milk Fluid Moisturizer | Avocado">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Barrier+ Milk Fluid stick Moisturizer | Avocado</h5>
+        <p class="card-text custom-desc">Lightweight Milk-Like Texture | Repairs & Strengthens Skin Barrier | 48Hr Deep Moisturization</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+      <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="lotion">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/shoot_d49b493f-6efd-4c18-9e68-0371ae518f8e.jpg?v=1724923299&width=990" 
+           class="card-img-top" alt="Glow+ Silky Body Lotion | Papaya & Vitamin C">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Glow+ Silky body Lotion | Papaya & Vitamin C</h5>
+        <p class="card-text custom-desc">Hydrates & Nourishes | 24-Hour Moisturization | Non-Sticky | For Normal to Dry Skin</p>
+        <p class="custom-price fw-bold">₹349.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="lotion">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Shoot_64edc2f4-9053-4345-80eb-3bf0830f4792.jpg?v=1714456556&width=990" 
+           class="card-img-top" alt="Radiance+ Silky Body Lotion | Watermelon">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Radiance+ Silky body Lotion | Watermelon</h5>
+        <p class="card-text custom-desc">Hydrates & Restores Skin | 24-Hour Moisturization | Non-Sticky | For Extremely Dry Skin</p>
+        <p class="custom-price fw-bold">₹349.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="sunscreen">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_0bcfa34f-dfe5-4c7f-b42b-43ec95c467a0.jpg?v=1747844714&width=990" class="card-img-top" alt="Glow+ Dewy Sunscreen">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Glow+ Dewy Sunscreen SPF 50+ PA++++ | Papaya</h5>
+        <p class="card-text custom-desc">Brightens Skin | No White Cast | For Glowing & Sun Protected Skin</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="sunscreen">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge  position-absolute top-0 start-0 m-2 " style="background-color: darkmagenta; color:yellow; " data-badge="New Launch">New Launch</span>
+      <img src="https://aqualogica.in/cdn/shop/files/1.3_Photoshoot_ca1caeb9-7c4c-4987-b9bc-4762620a04fb.jpg?v=1744010752&width=990" class="card-img-top" alt="Bright+ Tone Up Sunscreen">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Bright+ Tone Up Sunscreen SPF 50+ PA++++ | BlueBerries</h5>
+        <p class="card-text custom-desc">Super Light | SPF 50+ PA++++ | No White Cast | Instantly Brightens</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+         <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="sunscreen">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_bcdcf165-a878-49e4-b910-bb45bc5f3e7c.jpg?v=1747636581&width=990" class="card-img-top" alt="Detan+ Dewy Sunscreen">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Detan+ Dewy Sunscreen SPF 50+ PA++++ | Tomato</h5>
+        <p class="card-text custom-desc">Anti-Pollution Factor | Removes Tanning Evens Skin Tone</p>
+        <p class="custom-price fw-bold">₹499.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="sunscreen">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_9c773e8a-5f97-42cb-aff4-ad49e7076989.jpg?v=1748959100&width=990" class="card-img-top" alt="Radiance+ Dewy Sunscreen">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Radiance+ Dewy Sunscreen SPF 50 & PA+++ | Watermelon</h5>
+        <p class="card-text custom-desc">Ideal for Oily Skin Type| No White Cast | For Radiant Skin</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="sunscreen">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/Photoshoot_45eb2c2d-42ab-4f87-91dc-fb9c40271056.jpg?v=1743576217&width=533" class="card-img-top" alt="Illuminate+ Dewy Sunscreen">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Illuminate+ Dewy Sunscreen SPF 50+ PA++++ | Wild Berries</h5>
+        <p class="card-text custom-desc">Evens Skin Tone | Fragrance-Free | For Sun Protected Skin</p>
+        <p class="custom-price fw-bold">₹599.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="sunscreen">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/1_efe2a5c5-3705-40cf-8e55-eac290b434bc.jpg?v=1701348747&width=533" class="card-img-top" alt="Hydrate+ Dewy Sunscreen">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Hydrate+ Dewy Sunscreen SPF 50 & PA+++ | Coconut</h5>
+        <p class="card-text custom-desc">Blue Light Protection | Fragrance-free | Color-free</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+      <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-4 mb-4 product-section d-flex" data="sunscreen">
+    <div class="card custom-card position-relative h-100">
+      <span class="badge bg-success position-absolute top-0 start-0 m-2 custom-badge" data-badge="Best Seller">Best Seller</span>
+      <img src="https://aqualogica.in/cdn/shop/files/shoot_c210050a-b628-46fd-b9b6-22498cc9bef4.jpg?v=1730719911&width=990" class="card-img-top" alt="Barrier+ Repair Sunscreen">
+      <div class="card-body text-center d-flex flex-column">
+        <h5 class="card-title custom-title">Barrier+ Repair Sunscreen SPF 50+ PA++++ | Avocado</h5>
+        <p class="card-text custom-desc">Strengthens Skin Barrier | SPF 50+ PA++++ Protection | Super Light & Moisturizing</p>
+        <p class="custom-price fw-bold">₹449.00</p>
+        <button class="btn btn-primary mt-auto w-100 custom-btn" >Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+
+  </div>
+  <p id="noResults" class="text-danger">No products found 😔 </p>
+</div>
+
+
+
+
+<aside id="wishlist" class="d-none bg-dark p-3 rounded position-fixed top-0 end-0" style="width: 300px; height: 100%; overflow-y: auto;">
+    <button class="btn btn-danger mb-2" style="margin-left:250px; font-size: 10px; padding:5px 10px;" onclick="toggleWishlist()">X</button>
+    <h5 class="text-white" style="text-align:center">Your Wishlist</h5>
+    <div id="wishlistItems"></div>
+    <div id="grandTotal" class="text-warning mt-3"style="text-align:center">Grand Total: ₹0.00</div>
+</aside>
+
+
+
+<footer class="bg-dark text-white mt-5 pt-4 pb-2">
+  <div class="container">
+    <div class="row">
+
+      <!-- Brand Info -->
+      <div class="col-md-3 mb-4">
+        <h5>BLOOMORA</h5>
+        <p>Clean | Transparent | Science</p>
+        <div class="d-flex">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Facebook_Logo_2023.png" class="me-2" width="30" alt="Facebook">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="30" alt="Instagram">
+        </div>
+      </div>
+
+      <!-- Shop Links -->
+      <div class="col-md-3 mb-4">
+        <h5>Shop</h5>
+        <ul class="list-unstyled">
+          <li>Brands</li>
+          <li>Best Seller</li>
+          <li>New Launches</li>
+          <li>Kids Care</li>
+          <li>Sun Care</li>
+          <li>Skin Care</li>
+          <li>Hair Care</li>
+        </ul>
+      </div>
+
+      <!-- Explore Links -->
+      <div class="col-md-3 mb-4">
+        <h5>Explore</h5>
+        <ul class="list-unstyled">
+          <li>Bare Anatomy</li>
+          <li>Aqualogical</li>
+          <li>Plum</li>
+          <li>Mommy Pure</li>
+        </ul>
+        <div class="d-flex gap-3 mt-3">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/Facebook_Logo_2023.png" alt="Facebook" width="30">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" width="30">
+        </div>
+      </div>
+
+      <!-- Payment Security -->
+      <div class="col-md-3 mb-4">
+        <h5>🔒 Secure Payment</h5>
+        <p>Your payment information is processed securely</p>
+        <div class="d-flex flex-wrap align-items-center">
+          <img src="https://crosschecknews.com/wp-content/uploads/2024/01/UPI-Lpgo-UPI-Icon-PNG.png" alt="UPI" class="me-2 mb-2" width="50">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/RuPay.svg/2560px-RuPay.svg.png" alt="RuPay" class="me-2 mb-2" width="50">
+          <img src="https://cdn-icons-png.flaticon.com/512/1040/1040247.png" alt="Wallet" class="me-2 mb-2" width="40">
+          <img src="https://cdn-icons-png.flaticon.com/512/891/891419.png" alt="Net Banking" class="me-2 mb-2" width="40">
+          <img src="https://cdn-icons-png.flaticon.com/512/639/639365.png" alt="COD" class="me-2 mb-2" width="40">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Copyright -->
+    <div class="row">
+      <div class="col-12 text-center mt-3">
+        <p class="mb-0">&copy; 2025 Onesto Labs Private Limited. All Rights Reserved</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+
+let wishList = [];
+
+function updateWishlistCount() {
+    document.getElementById("wishlistCount").innerText = wishList.length;
+}
+
+function showOnly(data) {
+  const products = document.querySelectorAll('.product-section');
+
+  products.forEach(product => {
+    if (product.getAttribute('data') === data) {
+      product.classList.remove('d-none'); 
+      product.classList.add('d-flex');    
+    } else {
+      product.classList.add('d-none');    
+      product.classList.remove('d-flex');
+    }
+  });
+}
+
+ 
+document.addEventListener("DOMContentLoaded", function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const dataParam = urlParams.get('data')?.toLowerCase().trim();
+  const badgeParam = urlParams.get('data-badge')?.toLowerCase().trim();
+
+  document.querySelectorAll('.product-section').forEach(product => {
+    let show = true;
+
+    // Check category (data)
+    if (dataParam) {
+      const category = product.getAttribute('data')?.toLowerCase().trim() || '';
+      if (category !== dataParam) {
+        show = false;
+      }
+    }
+
+    // Check badge
+    if (badgeParam) {
+      const badgeEl = product.querySelector('[data-badge]');
+      const badgeText = badgeEl?.getAttribute('data-badge')?.toLowerCase().trim() || '';
+      if (badgeText !== badgeParam) {
+        show = false;
+      }
+    }
+
+    // Show/hide product
+    if (show) {
+      product.classList.remove('d-none');
+      product.classList.add('d-flex');
+    } else {
+      product.classList.add('d-none');
+      product.classList.remove('d-flex');
+    }
+  });
+});
+
+
+function setup() {
+    let products = document.querySelectorAll(".custom-btn");
+    products.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const card = e.target.closest(".card");
+            const productTitle = card.querySelector(".custom-title").innerText;
+            const priceText = card.querySelector(".custom-price").innerText;
+            const imgSrc = card.querySelector(".card-img-top").src;
+            addItem(productTitle, priceText, imgSrc);
+        });
+    });
+}
+
+function addItem(title, price, imgSrc) {
+    if (wishList.find(item => item.title === title)) return;
+
+    const priceValue = parseFloat(price.replace(/[^\d.]/g, ""));
+    const item = { title, priceValue, qty: 1, imgSrc };
+    wishList.push(item);
+    renderWishlist();
+    updateWishlistCount();
+    calculateGrandTotal();
+}
+
+function renderWishlist() {
+    const wishlistContainer = document.getElementById("wishlistItems");
+    wishlistContainer.innerHTML = "";
+    wishList.forEach((item, index) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "d-flex align-items-center mb-2 bg-dark text-white p-2 rounded";
+        itemDiv.innerHTML = `
+            <img src="${item.imgSrc}" style="width:80px; height:100px;" class="me-2 rounded">
+            <div class="flex-grow-1">
+                <p class="mb-0 wishlist-title" style="font-size: 15px; margin: 5px 0;">${item.title}</p>
+                <div class="d-flex align-items-center mt-2">
+                    <p class="mb-0 fw-bold me-3">₹${item.priceValue}</p>
+                    <input type="number" min="1" value="${item.qty}" class="form-control qty-input me-3" data-index="${index}" style="width: 50px; height: 25px; padding: 2px; margin-left:70px;">
+                </div>
+                <button class="btn btn-sm btn-danger remove-btn" data-index="${index}" style="width: 70px; margin-left:60px; margin-top:10px;">Remove</button>
+            </div>
+        `;
+        wishlistContainer.appendChild(itemDiv);
+    });
+    setQtyListeners();
+    setRemoveListeners();
+}
+
+function setQtyListeners() {
+    document.querySelectorAll(".qty-input").forEach(input => {
+        input.addEventListener("input", (e) => {
+            const index = e.target.getAttribute("data-index");
+            const qty = parseInt(e.target.value);
+            wishList[index].qty = qty > 0 ? qty : 1;
+            calculateGrandTotal();
+        });
+    });
+}
+
+function setRemoveListeners() {
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const index = e.target.getAttribute("data-index");
+            wishList.splice(index, 1);
+            renderWishlist();
+            updateWishlistCount();
+            calculateGrandTotal();
+        });
+    });
+}
+
+function calculateGrandTotal() {
+    let total = 0;
+    wishList.forEach(item => {
+        total += item.priceValue * item.qty;
+    });
+    document.getElementById("grandTotal").innerText = `Grand Total: ₹${total.toFixed(2)}`;
+}
+
+function toggleWishlist() {
+    const wishlist = document.getElementById("wishlist");
+    wishlist.classList.toggle("d-none");
+}
+
+window.onload = setup;
+
+
+const searchBox = document.getElementById('search');
+const placeholders = [
+    "🔍 Search for Spray type",
+    "🔍 Search for Tube type",
+    "🔍 Search for stick type",
+    "🔍 Search for Body lotion",
+    "🔍 Search for Sunscreen",
+    "🔍 Search for lip balm",
+     "🔍 Search for eye care"
+];
+
+let wordIndex = 0;
+let charIndex = 0;
+
+function typePlaceholder() {
+    if (charIndex <= placeholders[wordIndex].length) {
+        searchBox.placeholder = placeholders[wordIndex].substring(0, charIndex);
+        charIndex++;
+        setTimeout(typePlaceholder, 100);
+    } else {
+        setTimeout(erasePlaceholder, 2000);
+    }
+}
+
+function erasePlaceholder() {
+    if (charIndex >= 0) {
+        searchBox.placeholder = placeholders[wordIndex].substring(0, charIndex);
+        charIndex--;
+        setTimeout(erasePlaceholder, 50);
+    } else {
+        wordIndex = (wordIndex + 1) % placeholders.length;
+        setTimeout(typePlaceholder, 500);
+    }
+}
+
+typePlaceholder();
+
+
+searchBox.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    searchProduct();
+    searchBox.value = ''; 
+    suggestionsBox.innerHTML = '';
+    suggestionsBox.style.display = 'none';
+  }
+});
+
+function normalize(str) {
+  return str.toLowerCase().replace(/\s+/g, '').trim();
+}
+
+const suggestionsBox = document.getElementById("suggestions");
+
+searchBox.addEventListener("input", function () {
+  const input = this.value;
+  const search = normalize(input);
+  suggestionsBox.innerHTML = "";
+
+  if (!input.trim()) {
+    suggestionsBox.style.display = "none";
+    showAllProducts();
+    return;
+  }
+
+  const products = document.querySelectorAll('.product-section');
+  const shownKeywords = new Set();
+  let matchCount = 0;
+
+  products.forEach(product => {
+    const keyword = product.getAttribute('data') || '';
+    const keywordLower = keyword.toLowerCase();
+    const keywordNormalized = normalize(keywordLower);
+
+    if (
+      keywordLower.includes(input.toLowerCase()) ||
+      keywordNormalized.includes(search)
+    ) {
+      if (!shownKeywords.has(keywordLower) && matchCount < 5) {
+        const li = document.createElement("li");
+        li.className = "list-group-item list-group-item-action";
+        li.textContent = keyword;
+        li.addEventListener("click", () => {
+          searchBox.value = keyword;
+          suggestionsBox.innerHTML = "";
+          suggestionsBox.style.display = "none";
+          searchProduct();
+          searchBox.value = '';
+        });
+        suggestionsBox.appendChild(li);
+
+        shownKeywords.add(keywordLower);
+        matchCount++;
+      }
+    }
+  });
+
+  suggestionsBox.style.display = matchCount > 0 ? "block" : "none";
+});
+
+document.addEventListener("click", function (e) {
+  if (!suggestionsBox.contains(e.target) && e.target !== searchBox) {
+    suggestionsBox.style.display = "none";
+  }
+});
+
+function showAllProducts() {
+  document.querySelectorAll(".product-section").forEach(product => {
+    product.classList.remove("d-none");
+    product.classList.add("d-block");
+  });
+}
+
+function searchProduct() {
+  const input = searchBox.value.toLowerCase().trim();
+  const search = normalize(input);
+
+  const products = document.querySelectorAll('.product-section');
+  let found = false;
+
+  products.forEach(product => {
+    const keyword = product.getAttribute('data') || '';
+    const keywordLower = keyword.toLowerCase();
+    const keywordNormalized = normalize(keywordLower);
+
+    if (
+      keywordLower.includes(input) ||
+      keywordNormalized.includes(search)
+    ) {
+      product.classList.remove('d-none');
+      product.classList.add('d-block');
+      found = true;
+    } else {
+      product.classList.add('d-none');
+      product.classList.remove('d-block');
+    }
+  });
+
+  const noResults = document.getElementById("noResults");
+  if (noResults) {
+    noResults.style.display = found ? 'none' : 'block';
+  }
+   searchBox.value = '';
+}
+
+
+
+function openPopup() {
+    document.getElementById('popup').classList.remove('d-none');
+}
+
+function closePopup() {
+    document.getElementById('popup').classList.add('d-none');
+}
+
+function showSignup() {
+  document.getElementById('login-box').style.display = 'none';
+  document.getElementById('signup-box').style.display = 'block';
+}
+
+function showLogin() {
+  document.getElementById('signup-box').style.display = 'none';
+  document.getElementById('login-box').style.display = 'block';
+}
+
+
+
+    </script>
